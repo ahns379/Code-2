@@ -1,21 +1,9 @@
 body {
   margin: 0px;
   padding: 0px;
-  background: #888;
+  /* background: #888; */
   overflow: hidden;
   font-family: 'Roboto', sans-serif;
-}
-canvas {
-  background: #ddd;
-}
-
-#gui > .close-button {
-  background: #2FA1D6;
-  color: rgba(255,255,255,0.8);
-  font-weight: bold;
-  text-shadow: none;
-  padding: 3px;
-  vertical-align: middle;
 }
 
 #colorLegend {
@@ -38,7 +26,6 @@ canvas {
   display: flex;
   align-items: center;
   text-transform: uppercase;
-  /* color: #555; */
   width: 125px;
 }
 
@@ -51,45 +38,5 @@ canvas {
 }
 
 #chartContainer {
-  /* position: absolute;
-  right: 15px;
-  top: 2px;
-  opacity: 0.75;
-  height: 100px;
-  width: 300px; */
   display: none;
 }
-
-/* #capacity {
-  border-bottom: dotted rgba(0,0,0,0.5) 2px;
-  position: relative;
-  top: 65px;
-  left: 2px;
-  opacity: 0.75;
-  text-align: right;
-  z-index: 100;
-} */
-/*
-@media only screen and (max-width: 600px) {
-  #gui {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-  }
-
-  #chartContainer {
-    position: absolute;
-    top: 3px;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-  }
-
-  #chartContainer > canvas {
-    position: relative;
-    top: -2px;
-  }
-
-} */

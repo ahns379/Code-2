@@ -1,20 +1,16 @@
-var CONFIG = {
+var virus_particles = {
   COLORS: {
     healthy: "#98FB98",
     infected: "#8B0000",
     recovered: "#00FFFF",
     dead: "#000000"
   },
-  // // SCREEN_WIDTH: 0,
-  // SCREEN_HEIGHT: 0,
-  infected: 2,
-  // SOCIAL_DISTANCING_RATE: 0.15,
-  // SOCIAL_DISTANCING_INTENSITY: 0.9,
-  death_rate: 0.00015,
-  speed: 2,
-  s: 10,
-  recovery: 1200,
-  count: 500
+    infected: 2,
+    death_rate: 0.0001,
+    speed: 5,
+    s: 15,
+    recovery: 1200,
+    count: 500
 };
 
 (function() {
@@ -33,66 +29,60 @@ var CONFIG = {
     }
   }
 
-  function infectParticle(particle){
-    if (particle.healthStatus == "healthy") {
-      particle.healthStatus = "infected";
-      particle.fillColor = CONFIG.COLORS.infected;
-      particle.timeToRecover = CONFIG.recovery;
+  function infectParticle(virus){
+    if (virus.healthStatus == "healthy") {
+      virus.healthStatus = "infected";
+      virus.fillColor = virus_particles.COLORS.infected;
+      virus.timeToRecover = virus_particles.recovery;
     }
   }
-  function recoverParticle(particle) {
-    particle.healthStatus = "recovered";
-    particle.fillColor = CONFIG.COLORS.recovered;
-    particle.timeToRecover = 0;
+  function recoverParticle(virus) {
+    virus.healthStatus = "recovered";
+    virus.fillColor = virus_particles.COLORS.recovered;
+    virus.timeToRecover = 0;
   }
 
-  function killParticle(particle) {
-    particle.healthStatus = "dead";
-    particle.fillColor = CONFIG.COLORS.dead;
-    particle.directionX = particle.directionX * 0;
-    particle.directionY = particle.directionY * 0;
-    particle.speed = 0;
+  function killParticle(virus) {
+    virus.healthStatus = "dead";
+    virus.fillColor = virus_particles.COLORS.dead;
+    virus.directionX = virus.directionX * 0;
+    virus.directionY = virus.directionY * 0;
+    virus.speed = 0;
   }
 
   function createParticles(){
-    particles = [];
-    // var depth = 0;
+    coronavirus = [];
 
-    for (var i = 0; i < CONFIG.count; i++) {
-      var posX = CONFIG.s/2 + Math.random() * (window.innerWidth - CONFIG.s/2)
-      var posY = CONFIG.s/2 + Math.random() * (window.innerHeight - CONFIG.s/2);
+    for (var i = 0; i < virus_particles.count; i++) {
+      var posX = Math.random() * (window.innerWidth - virus_particles.s/2)
+      var posY = Math.random() * (window.innerHeight - virus_particles.s/2);
 
-      var directionX = -CONFIG.speed + (Math.random() * (CONFIG.speed * 2));
-      var directionY = -CONFIG.speed + (Math.random()* (CONFIG.speed * 2));
+      var directionX = Math.random();
+      var directionY = Math.random();
 
-      var particle = {
+      var virus = {
         pos: { x: posX, y: posY },
-        size: CONFIG.s,
+        size: virus_particles.s,
         directionX: directionX,
         directionY: directionY,
-        speed: CONFIG.speed,
-        // targetX: posX,
-        // targetY: posY,
-        // depth: depth,
+        speed: virus_particles.speed,
         index:i,
-        fillColor: CONFIG.COLORS.healthy,
+        fillColor: virus_particles.COLORS.healthy,
         healthStatus: "healthy",
         timeToRecover: 0
       };
-      particles.push( particle );
+      coronavirus.push( virus );
     }
 
-    //inital Infections
-    for(var i = 0; (i < CONFIG.infected && (i < particles.length - 1) ); i++ ) {
-      infectParticle(particles[i]);
+    for(var i = 0; (i < virus_particles.infected && (i < coronavirus.length - 1) ); i++ ) {
+      infectParticle(coronavirus[i]);
     }
 
   }
 
   function loop(){
-    var percentageInfectedParticles = (particles.filter(p => {return (p.healthStatus == "infected" || p.healthStatus == "dead")}).length / particles.length);
-    var colorRedAmount = 250 - (percentageInfectedParticles * 50);
-    context.fillStyle = 'rgba(250,' + colorRedAmount + ',' + colorRedAmount + ',0.2)';
+    var percentageInfectedParticles = (coronavirus.filter(p => {return (p.healthStatus == "infected" || p.healthStatus == "dead")}).length / coronavirus.length);
+    context.fillStyle = 'rgba(250,250, 250)';
     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 
     var z = 0;
@@ -100,55 +90,51 @@ var CONFIG = {
     var ydist = 0;
     var dist = 0;
 
-    for (var i=0; i < particles.length; i++){
+    for (var i=0; i < coronavirus.length; i++){
 
-      var particle = particles[i];
-      // var lp = { x: particle.pos.x, y: particle.pos.y };
+      var virus = coronavirus[i];
 
-      if(particle.pos.x <=particle.size/2 || particle.pos.x >= CONFIG.SCREEN_WIDTH - CONFIG.s/2){
-        particle.directionX *= -1;
+      if(virus.pos.x <=virus.size/2 || virus.pos.x >= virus_particles.SCREEN_WIDTH - virus_particles.s/2){
+        virus.directionX *= -1;
       }
 
-      if(particle.pos.y <=particle.size/2 || particle.pos.y >= CONFIG.SCREEN_HEIGHT - CONFIG.s/2){
-        particle.directionY *= -1;
+      if(virus.pos.y <=virus.size/2 || virus.pos.y >= virus_particles.SCREEN_HEIGHT - virus_particles.s/2){
+        virus.directionY *= -1;
       }
 
-      if (particle.healthStatus == "infected") {
-        particle.timeToRecover--;
-        if (particle.timeToRecover <= 0) {
-          recoverParticle(particle);
-        } else if (Math.random() <= CONFIG.death_rate) {
-          killParticle(particle);
+      if (virus.healthStatus == "infected") {
+        virus.timeToRecover--;
+        if (virus.timeToRecover <= 0) {
+          recoverParticle(virus);
+        } else if (Math.random() <= virus_particles.death_rate) {
+          killParticle(virus);
         }
       }
 
-      for(var s=0; s < particles.length; s++) {
-        var bounceParticle = particles[s];
-          if(bounceParticle.index != particle.index) {
-            //what are the distances
-            z = CONFIG.s;
-            xdist = Math.abs(bounceParticle.pos.x - particle.pos.x);
-            ydist = Math.abs(bounceParticle.pos.y - particle.pos.y);
+      for(var s=0; s < coronavirus.length; s++) {
+        var collision = coronavirus[s];
+          if(collision.index != virus.index) {
+            z = virus_particles.s;
+            xdist = Math.abs(collision.pos.x - virus.pos.x);
+            ydist = Math.abs(collision.pos.y - virus.pos.y);
             dist = Math.sqrt(Math.pow(xdist, 2) + Math.pow(ydist, 2));
             if(dist < z) {
-              randomiseDirection(particle);
-              randomiseDirection(bounceParticle);
-              if (particle.healthStatus == "infected" || bounceParticle.healthStatus == "infected") {
-                infectParticle(bounceParticle);
-                infectParticle(particle);
+              randomiseDirection(collision);
+              if (virus.healthStatus == "infected" || collision.healthStatus == "infected") {
+                infectParticle(collision);
+                infectParticle(virus);
               }
             }
           }
         }
 
-        particle.pos.x -= particle.directionX;
-        particle.pos.y -= particle.directionY;
+        virus.pos.x -= virus.directionX;
+        virus.pos.y -= virus.directionY;
 
         context.beginPath();
-        context.fillStyle = particle.fillColor;
-        context.lineWidth = particle.size;
-        // context.moveTo(lp.x, lp.y);
-        context.arc(particle.pos.x, particle.pos.y, particle.size/2, 0, Math.PI*2, true);
+        context.fillStyle = virus.fillColor;
+        context.lineWidth = virus.size;
+        context.arc(virus.pos.x, virus.pos.y, virus.size/2, 0, Math.PI*2, true);
         context.closePath();
         context.fill();
     }
@@ -158,17 +144,17 @@ var CONFIG = {
     }
   }
 
-  function randomiseDirection (particle) {
+  function randomiseDirection (virus) {
     var r = (Math.random() * 180)/Math.PI;
-    particle.directionX = Math.sin(r) * particle.speed;
-    particle.directionY = Math.cos(r) * particle.speed;
+    virus.directionX = Math.sin(r) ;
+    virus.directionY = Math.cos(r) ;
   }
 
   function windowResizeHandler() {
-    CONFIG.SCREEN_WIDTH = window.innerWidth;
-    CONFIG.SCREEN_HEIGHT = window.innerHeight;
-    canvas.width = CONFIG.SCREEN_WIDTH;
-    canvas.height = CONFIG.SCREEN_HEIGHT;
+    virus_particles.SCREEN_WIDTH = window.innerWidth;
+    virus_particles.SCREEN_HEIGHT = window.innerHeight;
+    canvas.width = virus_particles.SCREEN_WIDTH;
+    canvas.height = virus_particles.SCREEN_HEIGHT;
   }
 
   init();
